@@ -4,7 +4,7 @@ import { Container } from "@mui/material";
 const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
