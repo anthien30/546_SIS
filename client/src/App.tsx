@@ -1,45 +1,37 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
-import { Sidebar, Menu, MenuItem, Submenu, Logo } from "react-mui-sidebar";
-import { Container } from "@mui/material";
+import LoginScreen from "./components/Login/LoginScreen";
+import Navbar from "./components/Navbar";
 
 function App() {
-  return (
-    <div className="App">
-      <Container>
-        <Sidebar width={"270px"} showProfile={false}>
-          <Logo img="https://adminmart.com/wp-content/uploads/2024/03/logo-admin-mart-news.png">
-            CSUF SIS
-          </Logo>
-          <Menu subHeading="HOME">
-            <MenuItem link="/" badge>
-              Modern
-            </MenuItem>
-            <MenuItem>eCommerce</MenuItem>
-            <MenuItem>Analytical</MenuItem>
-          </Menu>
-          <Menu subHeading="APPS">
-            <MenuItem>Chat</MenuItem>
-            <MenuItem>Calendar</MenuItem>
-          </Menu>
-          <Menu subHeading="OTHERS">
-            <Submenu title="Menu Level">
-              <MenuItem>Post</MenuItem>
-              <MenuItem>Details</MenuItem>
-              <Submenu title="Level 2">
-                <MenuItem>new</MenuItem>
-                <MenuItem>Hello</MenuItem>
-              </Submenu>
-            </Submenu>
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-            <MenuItem>Chip</MenuItem>
-            <MenuItem target="_blank" link="google.com">
-              External Link
-            </MenuItem>
-          </Menu>
-        </Sidebar>
-        {/* Other components */}
-      </Container>
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) setIsAuthenticated(true);
+  }, []);
+
+  return (
+    <div className="App d-flex align-items-center justify-content-center">
+      <Router>
+        <Routes>
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/" /> : <LoginScreen />}
+          />
+          <Route
+            path="/"
+            element={isAuthenticated ? <Navbar /> : <Navigate to="/login" />}
+          />
+        </Routes>
+      </Router>
     </div>
   );
 }
