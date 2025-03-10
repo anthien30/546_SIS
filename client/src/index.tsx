@@ -4,15 +4,26 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+const theme = createTheme({
+  // Customize your theme here if needed
+});
+
 root.render(
-  <React.StrictMode>
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    {/* <React.StrictMode> */}
     <App />
-  </React.StrictMode>
+    {/* </React.StrictMode> */}
+  </ThemeProvider>
 );
+
+//
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

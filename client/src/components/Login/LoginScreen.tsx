@@ -3,6 +3,8 @@ import { LoginCredentials } from "./model";
 import { Form, FormGroup } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
+import { CircularProgress } from "@mui/material";
+import styles from "./LoginScreen.module.scss";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -13,40 +15,34 @@ const LoginScreen = () => {
     formState: { errors },
   } = useForm<LoginCredentials>();
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async ({ username, password }: LoginCredentials) => {
+  const loginUser = async (credentials: LoginCredentials) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        username,
-        password,
-      });
-
-      const data = response.data;
+      setLoading(true);
+      const { data } = await axios.post(`${API_URL}/api/login`, credentials);
       localStorage.setItem("token", data.token);
-
       window.location.href = "/";
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error))
         setErrorMessage(
           error.response?.data?.message ?? "Something went wrong"
         );
-      } else {
-        setErrorMessage("Unexpected error");
-      }
+      else setErrorMessage("Unexpected error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <Form
-        onSubmit={handleSubmit(handleLogin)}
-        style={{
-          width: "500px",
-          borderRadius: "10px",
-          border: "1px solid lightgray",
-          padding: "2rem",
-        }}
-      >
+      <Form onSubmit={handleSubmit(loginUser)} className={styles.loginForm}>
+        {loading && (
+          <div className={styles.loginLoaderWrapper}>
+            <CircularProgress />
+          </div>
+        )}
+
         <FormGroup className="mb-4">
           <Form.Label className="fw-bold">Username</Form.Label>
           <Form.Control
