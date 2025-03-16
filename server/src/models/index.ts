@@ -5,6 +5,7 @@ export interface IAccount extends mongoose.Document {
   username: string;
   password: string;
   role: "Student" | "Faculty" | "Admin";
+  status: "Active" | "Inactive";
   createdOn: Date;
   createdBy: string | null;
 }

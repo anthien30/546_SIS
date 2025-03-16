@@ -4,10 +4,12 @@ import { Account } from "./models";
 import axiosInstance from "../../config/axiosInstance";
 import AccountsFiltersPanel from "./AccountsFiltersPanel";
 import AccountCreationDialog from "./AccountCreationDialog";
+import AccountEditDialog from "./AccountEditDialog";
 
 const AccountsManagementView = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCreationOpen, setIsCreationOpen] = useState(false);
+  const [openAccount, setOpenAccount] = useState<Account | null>(null);
 
   const searchAccounts = async (filtersJson: { [key: string]: any }) => {
     const queryStr = new URLSearchParams(filtersJson).toString();
@@ -33,12 +35,22 @@ const AccountsManagementView = () => {
         <AccountsFiltersPanel searchAccounts={searchAccounts} />
       </div>
 
-      <AccountsDataGrid data={accounts} displayForm={() => setIsOpen(true)} />
+      <AccountsDataGrid
+        data={accounts}
+        displayCreationForm={() => setIsCreationOpen(true)}
+        displayEditForm={(account) => setOpenAccount(account)}
+      />
 
       <AccountCreationDialog
         searchAccounts={() => searchAccounts({})}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isCreationOpen}
+        setIsOpen={setIsCreationOpen}
+      />
+
+      <AccountEditDialog
+        searchAccounts={() => searchAccounts({})}
+        account={openAccount}
+        setAccount={(account) => setOpenAccount(account)}
       />
     </div>
   );

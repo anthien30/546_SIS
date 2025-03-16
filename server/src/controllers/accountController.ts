@@ -34,6 +34,36 @@ export const registerAccount = async (
   }
 };
 
+export const updateAccount = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { role, status, username } = req.body;
+
+    if (!username) res.status(400).json({ message: "username is missing" });
+
+    let existingAccount = await Account.findOne({ username });
+
+    if (!existingAccount)
+      return res
+        .status(400)
+        .json({ message: "Account not found with the given id" });
+
+    if (!!role) existingAccount.role = role;
+    if (!!status) existingAccount.status = status;
+
+    await existingAccount.save();
+
+    res.status(200).json({
+      message: "Account updated successfully",
+      account: existingAccount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 export const getAccounts = async (
   req: Request,
   res: Response

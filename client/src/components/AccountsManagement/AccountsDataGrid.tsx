@@ -10,9 +10,14 @@ import { Box, Button } from "@mui/material";
 
 type AccountsDataGridProps = {
   data: Account[];
-  displayForm: () => void;
+  displayCreationForm: () => void;
+  displayEditForm: (account: Account) => void;
 };
-const AccountsDataGrid = ({ data, displayForm }: AccountsDataGridProps) => {
+const AccountsDataGrid = ({
+  data,
+  displayCreationForm,
+  displayEditForm,
+}: AccountsDataGridProps) => {
   function CustomToolbar() {
     return (
       <GridToolbarContainer
@@ -28,7 +33,7 @@ const AccountsDataGrid = ({ data, displayForm }: AccountsDataGridProps) => {
             button: { variant: "outlined" },
           }}
         /> */}
-        <Button onClick={displayForm}>
+        <Button onClick={displayCreationForm}>
           <AddIcon /> New Account
         </Button>
       </GridToolbarContainer>
@@ -48,6 +53,9 @@ const AccountsDataGrid = ({ data, displayForm }: AccountsDataGridProps) => {
         disableColumnResize
         disableDensitySelector
         disableColumnMenu
+        onRowDoubleClick={(data) => {
+          displayEditForm(data.row);
+        }}
       />
     </div>
   );

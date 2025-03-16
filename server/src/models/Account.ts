@@ -5,6 +5,7 @@ const accountSchema = new mongoose.Schema<IAccount>({
   role: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
+  status: { type: String, required: true, default: "Active" },
   password: { type: String, required: true },
   createdOn: { type: Date, required: false },
   createdBy: { type: String, required: false },

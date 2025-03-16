@@ -17,7 +17,11 @@ export const accountsDataGridColumns: GridColDef[] = [
     headerName: "Role",
     width: 150,
   },
-
+  {
+    field: "status",
+    headerName: "Status",
+    width: 100,
+  },
   {
     field: "createdBy",
     headerName: "Created By",
