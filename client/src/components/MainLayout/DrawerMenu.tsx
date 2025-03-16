@@ -1,4 +1,4 @@
-import { Box, Divider, Drawer, List } from "@mui/material";
+import { Box, Divider, Drawer, List, Menu } from "@mui/material";
 import { Link } from "react-router-dom";
 import MenuItem from "./MenuItem";
 
@@ -40,6 +40,8 @@ const DrawerMenu = ({ isOpen, drawerWidth }: DrawerMenuProps) => {
         <Divider />
         <List sx={{ padding: "0" }}>
           <MenuItem to="/accounts-management" text="Accounts Management" />
+          <MenuItem to="/courses" text="Courses" />
+          <MenuItem to="/degrees" text="Degrees" />
         </List>
       </Box>
     </Drawer>

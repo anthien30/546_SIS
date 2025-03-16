@@ -10,12 +10,14 @@ const AccountsFiltersPanel = ({
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
+  const [status, setStatus] = useState("Active");
 
   const handleClick = () => {
     const filtersData: any = {};
     if (email) filtersData.email = email;
     if (username) filtersData.username = username;
     if (role) filtersData.role = role;
+    if (status) filtersData.status = status;
 
     searchAccounts(filtersData);
   };
@@ -25,7 +27,7 @@ const AccountsFiltersPanel = ({
       <div className="d-flex">
         <TextField
           sx={{
-            width: "250px",
+            width: "200px",
             marginRight: "1rem",
             ".MuiInputBase-input": {
               padding: "0.6rem",
@@ -41,7 +43,7 @@ const AccountsFiltersPanel = ({
         />
         <TextField
           sx={{
-            width: "250px",
+            width: "200px",
             marginRight: "1rem",
             ".MuiInputBase-input": {
               padding: "0.6rem",
@@ -57,7 +59,7 @@ const AccountsFiltersPanel = ({
         />
         <Autocomplete
           sx={{
-            width: "250px",
+            width: "200px",
             marginRight: "1rem",
             ".MuiAutocomplete-inputRoot": {
               padding: "0.1rem",
@@ -70,10 +72,27 @@ const AccountsFiltersPanel = ({
           }}
           value={role}
         />
+        <Autocomplete
+          sx={{
+            width: "200px",
+            marginRight: "1rem",
+            ".MuiAutocomplete-inputRoot": {
+              padding: "0.1rem",
+            },
+          }}
+          renderInput={(params) => (
+            <TextField {...params} placeholder="Status" />
+          )}
+          options={["Active", "Inactive"]}
+          onChange={(_, value) => {
+            setStatus(value ?? "");
+          }}
+          value={status}
+        />
       </div>
 
       <Button
-        style={{ width: "200px" }}
+        style={{ width: "170px" }}
         variant="contained"
         className="btn btn-primary"
         onClick={handleClick}

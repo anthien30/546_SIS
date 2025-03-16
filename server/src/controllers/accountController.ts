@@ -69,13 +69,14 @@ export const getAccounts = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { username, email, role, sortBy, sortOrder } = req.query;
+    const { username, email, role, status, sortBy, sortOrder } = req.query;
 
     // Build a filter object based on the query parameters
     const filters: any = {};
     if (username) filters.username = { $regex: username, $options: "i" }; // 'i' for case-insensitive
     if (email) filters.email = { $regex: email, $options: "i" };
     if (role) filters.role = role;
+    if (status) filters.status = status;
 
     // Define sorting order, defaulting to ascending if not specified
     const sortOptions: any = {};
