@@ -8,7 +8,7 @@ export const registerAccount = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { email, username, password, role } = req.body;
+    const { email, username, password, role } = req.body as IAccount;
 
     let existingAccount = await Account.findOne({ username });
     if (existingAccount)
@@ -39,7 +39,7 @@ export const updateAccount = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { role, status, username } = req.body;
+    const { role, status, username } = req.body as IAccount;
 
     if (!username) res.status(400).json({ message: "username is missing" });
 

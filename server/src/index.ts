@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db";
 import accountRoutes from "./routes/accountRoutes";
 import authRoutes from "./routes/authRoutes";
+import courseRoutes from "./routes/courseRoutes";
 import authenticateToken from "./middlewares/authenticateToken";
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api", authRoutes);
 
 app.use("/api/account", authenticateToken, accountRoutes);
+app.use("/api/course", authenticateToken, courseRoutes);
 
 app.get("/protected-route", authenticateToken, (req, res) => {
   res.json({

@@ -16,6 +16,12 @@ const LoginScreen = React.lazy(() => import("./components/Login/LoginScreen"));
 const AccountsManagementView = React.lazy(
   () => import("./components/AccountsManagement/AccountsManagementView")
 );
+const AcademicTermsView = React.lazy(
+  () => import("./components/AcademicTerms/AcademicTermsView")
+);
+const CoursesView = React.lazy(
+  () => import("./components/Courses/CoursesView")
+);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -59,6 +65,8 @@ function App() {
                   path="/accounts-management"
                   element={<AccountsManagementView />}
                 />
+                <Route path="/academic-terms" element={<AcademicTermsView />} />
+                <Route path="/courses" element={<CoursesView />} />
               </Route>
             )}
 
