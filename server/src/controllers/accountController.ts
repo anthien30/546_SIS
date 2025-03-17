@@ -48,7 +48,7 @@ export const updateAccount = async (
     if (!existingAccount)
       return res
         .status(400)
-        .json({ message: "Account not found with the given id" });
+        .json({ message: "Account not found with the given username" });
 
     if (!!role) existingAccount.role = role;
     if (!!status) existingAccount.status = status;

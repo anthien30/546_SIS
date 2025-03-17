@@ -15,6 +15,7 @@ export interface Course {
   description: string | null;
   credits: number;
   semester: string | null;
+  isDeleted: boolean;
   schedule: {
     days: Day[];
     time: {

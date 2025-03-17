@@ -18,6 +18,7 @@ export interface ICourse extends mongoose.Document {
   description?: string; // Optional field
   credits: number;
   semester: string; // e.g., 'Fall 2025'
+  isDeleted: boolean;
   schedule: {
     days: string[]; // e.g., ['Monday', 'Wednesday']
     time: {

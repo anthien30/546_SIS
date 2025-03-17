@@ -4,6 +4,7 @@ import axiosInstance from "../../config/axiosInstance";
 import CoursesFiltersPanel from "./CoursesFiltersPanel";
 import CoursesDataGrid from "./CoursesDataGrid";
 import CourseCreationDialog from "./CourseCreationDialog";
+import CourseEditDialog from "./CourseEditDialog";
 
 const CoursesView = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -45,15 +46,12 @@ const CoursesView = () => {
         isOpen={isCreationOpen}
         setIsOpen={setIsCreationOpen}
       />
-      {/* 
 
-     
-
-      <AccountEditDialog
-        searchAccounts={() => searchAccounts({})}
-        account={openAccount}
-        setAccount={(account) => setOpenAccount(account)}
-      /> */}
+      <CourseEditDialog
+        searchCourses={(filters) => searchCourses(filters)}
+        course={openCourse}
+        setCourse={setOpenCourse}
+      />
     </div>
   );
 };

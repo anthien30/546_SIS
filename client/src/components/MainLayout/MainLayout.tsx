@@ -3,7 +3,8 @@ import { Outlet } from "react-router-dom";
 import TopBar from "./TopBar";
 import { Box } from "@mui/material";
 import DrawerMenu from "./DrawerMenu";
-import Notification from "../Notification/Notification";
+import Notification from "../Common/Notification/Notification";
+import ConfirmationDialog from "../Common/ConfirmationDialog/ConfirmationDialog";
 
 const DRAWER_WIDTH = 240;
 
@@ -19,6 +20,7 @@ const MainLayout = () => {
         drawerWidth={DRAWER_WIDTH}
       />
       <Notification />
+      <ConfirmationDialog />
       <main
         style={{
           position: "absolute",

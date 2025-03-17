@@ -10,30 +10,33 @@ import {
   TextField,
 } from "@mui/material";
 import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
 import axiosInstance from "../../config/axiosInstance";
 import { notificationService } from "../Common/Notification/notificationSubject";
 import { Course } from "./models";
+import { confirmationService } from "../Common/ConfirmationDialog/confirmationDialogSubject";
 
-type CourseCreationDialogProps = {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+type CourseEditDialogProps = {
+  course: Course | null;
+  setCourse: (course: Course | null) => void;
   searchCourses: (filters: { [key: string]: string }) => void;
 };
-const CourseCreationDialog = ({
-  isOpen,
-  setIsOpen,
+const CourseEditDialog = ({
+  course,
+  setCourse,
   searchCourses,
-}: CourseCreationDialogProps) => {
+}: CourseEditDialogProps) => {
   const {
+    control,
     register,
-    formState: { errors },
+    formState: { errors, dirtyFields },
     handleSubmit,
     reset,
-    setValue,
     watch,
-  } = useForm<Course>();
+    setValue,
+  } = useForm<Course>({ mode: "all" });
+  useFieldArray({ control, name: "prerequisites" });
   const [loading, setLoading] = useState(false);
   const [prerequisitesOptions, setPrerequisitesOptions] = useState<Course[]>(
     []
@@ -43,13 +46,18 @@ const CourseCreationDialog = ({
   );
 
   const prerequisites = watch("prerequisites");
+  const semester = watch("semester");
+  const code = watch("code");
 
-  const createCourse = (data: Course) => {
+  const updateCourse = (data: Course) => {
+    if (Object.keys(dirtyFields).length === 0)
+      return notificationService.success("No changes were made");
+
     setLoading(true);
     axiosInstance
-      .post("/api/course/register", data)
+      .post("/api/course/update", data)
       .then(() => {
-        notificationService.success("Course created");
+        notificationService.success("Course updated");
         searchCourses({});
         handleClose();
       })
@@ -74,11 +82,33 @@ const CourseCreationDialog = ({
       );
       setPrerequisitesOptions(
         response.data
-          .filter((c) => !prerequisites?.includes(c._id as string))
+          .filter(
+            (c) => c.code !== code && !prerequisites?.includes(c._id as string)
+          )
           .map((c) => ({ ...c, id: c._id }))
       );
     } catch (error) {
+      notificationService.error("Failed to search for prerequisites");
       console.error(error);
+    }
+  };
+
+  const deleteCourse = async () => {
+    setLoading(true);
+    try {
+      await axiosInstance.delete<Course[]>(
+        `/api/course/delete?id=${course?._id}`
+      );
+      notificationService.success("Course deleted!");
+      searchCourses({});
+      handleClose();
+    } catch (error: any) {
+      console.error(error);
+      notificationService.error(
+        error.response?.data?.message ?? "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,13 +116,20 @@ const CourseCreationDialog = ({
     prerequisites,
   ]);
 
-  const handleClose = () => setIsOpen(false);
+  const handleClose = () => setCourse(null);
 
-  useEffect(() => reset(), [isOpen, reset]);
+  useEffect(() => {
+    reset({
+      ...course,
+      prerequisites:
+        (course?.prerequisites.map((p) => (p as Course)._id) as any) ?? [],
+    });
+    setSelectedPrerequisites((course?.prerequisites as any) ?? []);
+  }, [course, reset]);
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>New Course</DialogTitle>
+    <Dialog open={!!course} onClose={handleClose} fullWidth maxWidth="md">
+      <DialogTitle>Course Details</DialogTitle>
       <DialogContent>
         <Form className="position-relative">
           <Row>
@@ -104,6 +141,7 @@ const CourseCreationDialog = ({
                   {...register("name", {
                     required: "Course name is required",
                   })}
+                  disabled
                   placeholder="Enter course name"
                 />
                 <Form.Text className="text-danger">
@@ -117,6 +155,7 @@ const CourseCreationDialog = ({
                 <Form.Label className="fw-bold">Code</Form.Label>
                 <Form.Control
                   type="text"
+                  disabled
                   {...register("code", {
                     required: "Course code is required",
                   })}
@@ -172,6 +211,7 @@ const CourseCreationDialog = ({
                     onChange={(_, value) => {
                       setValue("semester", value);
                     }}
+                    value={semester}
                   />
                 </div>
                 <Form.Text className="text-danger">
@@ -200,17 +240,10 @@ const CourseCreationDialog = ({
                 <Form.Label className="fw-bold">Prerequisites</Form.Label>
                 <div className="d-flex">
                   <Autocomplete
+                    {...register("prerequisites")}
                     autoComplete
                     multiple
-                    sx={{
-                      width: "100%",
-                      // ".MuiInputBase-formControl": {
-                      //   height: "38px",
-                      // },
-                      // ".MuiInputBase-input": {
-                      //   padding: "0.6rem",
-                      // },
-                    }}
+                    sx={{ width: "100%" }}
                     getOptionLabel={(option) =>
                       `${option.code} - ${option.name}`
                     }
@@ -236,7 +269,8 @@ const CourseCreationDialog = ({
                       if (value)
                         setValue(
                           "prerequisites",
-                          value?.map((p) => p.id) as any
+                          value?.map((p) => p._id) as any,
+                          { shouldDirty: true }
                         );
                       setPrerequisitesOptions([]);
                     }}
@@ -277,6 +311,19 @@ const CourseCreationDialog = ({
       >
         <Button
           disabled={loading}
+          onClick={() => {
+            confirmationService.confirm({
+              title: "Deleting course: " + code,
+              message: "Are you sure you want to delete this course?",
+              onConfirmHandler: () => deleteCourse,
+            });
+          }}
+          className="btn-danger"
+        >
+          Delete
+        </Button>
+        <Button
+          disabled={loading}
           onClick={handleClose}
           className="btn-secondary"
         >
@@ -284,14 +331,14 @@ const CourseCreationDialog = ({
         </Button>
         <Button
           disabled={loading}
-          onClick={handleSubmit(createCourse)}
+          onClick={handleSubmit(updateCourse)}
           className="btn-primary"
         >
-          Create
+          Save
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default CourseCreationDialog;
+export default CourseEditDialog;

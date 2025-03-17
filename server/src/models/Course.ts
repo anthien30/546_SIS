@@ -18,6 +18,10 @@ const courseSchema = new mongoose.Schema<ICourse>({
     type: Number,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   semester: {
     type: String, // e.g., 'Fall 2025'
     required: true,

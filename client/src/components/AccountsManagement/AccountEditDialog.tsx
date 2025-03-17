@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { Account } from "./models";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../config/axiosInstance";
-import { notificationService } from "../Notification/notificationSubject";
+import { notificationService } from "../Common/Notification/notificationSubject";
 
 type AccountEditDialogProps = {
   account: Account | null;
@@ -131,7 +131,7 @@ const AccountEditDialog = ({
                   {/* <option value="Admin">Admin</option> */}
                 </Form.Select>
                 <Form.Text className="text-danger">
-                  {errors.role?.message}
+                  {errors.status?.message}
                 </Form.Text>
               </FormGroup>
             </Col>

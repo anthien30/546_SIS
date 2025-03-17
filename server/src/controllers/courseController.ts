@@ -7,19 +7,29 @@ export const createCourse = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { code, name, credits, semester, instructor, prerequisites } =
-    req.body as ICourse;
+  const {
+    code,
+    name,
+    credits,
+    semester,
+    description,
+    instructor,
+    prerequisites,
+  } = req.body as ICourse;
 
-  // const instructorRecord = await Account.findById(instructor);
-  // if (!instructorRecord || instructorRecord.role !== "Faculty") {
-  //   res.status(400).json({ message: "Invalid instructor id" });
-  // }
+  if (instructor) {
+    const instructorRecord = await Account.findById(instructor);
+    if (!instructorRecord || instructorRecord.role !== "Faculty") {
+      res.status(400).json({ message: "Invalid instructor id" });
+    }
+  }
 
   const course = new Course({
     code,
     name,
     credits,
     semester,
+    description,
     instructor,
     prerequisites,
   });
@@ -46,6 +56,7 @@ export const searchCourses = async (
         { code: { $regex: codeOrName, $options: "i" } },
         { name: { $regex: codeOrName, $options: "i" } },
       ];
+    filters.isDeleted = { $ne: true };
 
     // Define sorting order, defaulting to ascending if not specified
     const sortOptions: any = {};
@@ -65,4 +76,65 @@ export const searchCourses = async (
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
+};
+
+export const updateCourse = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const {
+    id,
+    // code,
+    // name,
+    credits,
+    description,
+    semester,
+    instructor,
+    prerequisites,
+  } = req.body as ICourse;
+
+  if (instructor) {
+    const instructorRecord = await Account.findById(instructor);
+    if (!instructorRecord || instructorRecord.role !== "Faculty") {
+      res.status(400).json({ message: "Invalid instructor id" });
+    }
+  }
+
+  const existingCourse = await Course.findById(id);
+
+  if (!existingCourse)
+    return res
+      .status(400)
+      .json({ message: "Course not found with the given id" });
+
+  existingCourse.credits = credits;
+  existingCourse.instructor = instructor;
+  existingCourse.description = description;
+  existingCourse.semester = semester;
+  existingCourse.prerequisites = prerequisites;
+  // existingCourse.code = code;
+  // existingCourse.name = name;
+
+  await existingCourse.save();
+
+  res.status(201).json({ message: "Course registered successfully" });
+};
+
+export const deleteCourse = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { id } = req.query;
+
+  if (!id) return res.status(400).json({ message: "Course id is required" });
+
+  const existingCourse = await Course.findById(id);
+  if (!existingCourse)
+    return res
+      .status(400)
+      .json({ message: "Course not found with the given id" });
+
+  await Course.deleteOne({ _id: id });
+
+  res.status(200).json({ message: "Course deleted" });
 };

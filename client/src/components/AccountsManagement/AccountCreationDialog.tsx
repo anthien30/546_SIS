@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { Account } from "./models";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../config/axiosInstance";
-import { notificationService } from "../Notification/notificationSubject";
+import { notificationService } from "../Common/Notification/notificationSubject";
 
 type AccountCreationDialogProps = {
   isOpen: boolean;
