@@ -40,9 +40,10 @@ const DrawerMenu = ({ isOpen, drawerWidth }: DrawerMenuProps) => {
         <Divider />
         <List sx={{ padding: "0" }}>
           <MenuItem to="/accounts-management" text="Accounts Management" />
-          <MenuItem to="/academic-terms" text="Academic Terms" />{" "}
-          <MenuItem to="/degrees" text="Degrees" />
+          <MenuItem to="/academic-terms" text="Academic Terms" />
           <MenuItem to="/courses" text="Courses" />
+          <MenuItem to="/curriculums" text="Curriculums" />
+          <MenuItem to="/schedules" text="Schedules" />
         </List>
       </Box>
     </Drawer>

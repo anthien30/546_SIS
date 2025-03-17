@@ -18,38 +18,38 @@ const courseSchema = new mongoose.Schema<ICourse>({
     type: Number,
     required: true,
   },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  semester: {
-    type: String, // e.g., 'Fall 2025'
-    required: true,
-  },
-  schedule: {
-    days: [String], // e.g., ['Monday', 'Wednesday']
-    time: {
-      start: String, // e.g., '10:00 AM'
-      end: String, // e.g., '11:30 AM'
-    },
-  },
+  // isDeleted: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // term: {
+  //   type: String,
+  //   required: true,
+  // },
+  // schedule: {
+  //   days: [String], // e.g., ['Monday', 'Wednesday']
+  //   time: {
+  //     start: String, // e.g., '10:00 AM'
+  //     end: String, // e.g., '11:30 AM'
+  //   },
+  // },
   prerequisites: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course", // Reference to other courses
     },
   ],
-  instructor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Account", // Reference to the Account entity with role 'faculty'
-    default: null,
-  },
-  enrolledStudents: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Account", // Reference to the Account entity with role 'student'
-    },
-  ],
+  // instructor: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Account", // Reference to the Account entity with role 'faculty'
+  //   default: null,
+  // },
+  // enrolledStudents: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Account", // Reference to the Account entity with role 'student'
+  //   },
+  // ],
 });
 
 const Course = mongoose.model<ICourse>("Course", courseSchema);

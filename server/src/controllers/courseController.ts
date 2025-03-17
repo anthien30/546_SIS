@@ -1,36 +1,19 @@
 import { Request, Response } from "express";
 import { ICourse } from "../models";
 import Course from "../models/Course";
-import Account from "../models/Account";
 
 export const createCourse = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const {
-    code,
-    name,
-    credits,
-    semester,
-    description,
-    instructor,
-    prerequisites,
-  } = req.body as ICourse;
-
-  if (instructor) {
-    const instructorRecord = await Account.findById(instructor);
-    if (!instructorRecord || instructorRecord.role !== "Faculty") {
-      res.status(400).json({ message: "Invalid instructor id" });
-    }
-  }
+  const { code, name, credits, description, prerequisites } =
+    req.body as ICourse;
 
   const course = new Course({
     code,
     name,
     credits,
-    semester,
     description,
-    instructor,
     prerequisites,
   });
 
@@ -44,13 +27,13 @@ export const searchCourses = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { code, name, semester, codeOrName, sortBy, sortOrder, limit } =
+    const { code, name, term, codeOrName, sortBy, sortOrder, limit } =
       req.query;
 
     const filters: any = {};
     if (name) filters.name = { $regex: name, $options: "i" };
     if (code) filters.code = { $regex: code, $options: "i" };
-    if (semester) filters.semester = semester;
+    if (term) filters.term = term;
     if (codeOrName)
       filters["$or"] = [
         { code: { $regex: codeOrName, $options: "i" } },
@@ -88,17 +71,8 @@ export const updateCourse = async (
     // name,
     credits,
     description,
-    semester,
-    instructor,
     prerequisites,
   } = req.body as ICourse;
-
-  if (instructor) {
-    const instructorRecord = await Account.findById(instructor);
-    if (!instructorRecord || instructorRecord.role !== "Faculty") {
-      res.status(400).json({ message: "Invalid instructor id" });
-    }
-  }
 
   const existingCourse = await Course.findById(id);
 
@@ -108,16 +82,16 @@ export const updateCourse = async (
       .json({ message: "Course not found with the given id" });
 
   existingCourse.credits = credits;
-  existingCourse.instructor = instructor;
+  // existingCourse.instructor = instructor;
   existingCourse.description = description;
-  existingCourse.semester = semester;
+  // existingCourse.term = term;
   existingCourse.prerequisites = prerequisites;
   // existingCourse.code = code;
   // existingCourse.name = name;
 
   await existingCourse.save();
 
-  res.status(201).json({ message: "Course registered successfully" });
+  res.status(201).json({ message: "Course updated successfully" });
 };
 
 export const deleteCourse = async (

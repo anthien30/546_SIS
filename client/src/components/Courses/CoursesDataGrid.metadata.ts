@@ -5,28 +5,33 @@ export const coursesDataGridColumns: GridColDef[] = [
   {
     field: "code",
     headerName: "Course Code",
-    width: 150,
+    width: 200,
   },
   {
     field: "name",
     headerName: "Name",
-    width: 350,
+    width: 500,
   },
   {
-    field: "semester",
-    headerName: "Semester",
-    width: 200,
+    field: "credits",
+    headerName: "Credits",
+    width: 150,
   },
-  {
-    field: "instructor",
-    headerName: "Instructor",
-    width: 200,
-    valueGetter: (value) => value ?? "TBA",
-  },
+  // {
+  //   field: "term",
+  //   headerName: "Term",
+  //   width: 200,
+  // },
+  // {
+  //   field: "instructor",
+  //   headerName: "Instructor",
+  //   width: 200,
+  //   valueGetter: (value) => value ?? "TBA",
+  // },
   {
     field: "prerequisites",
     headerName: "Prerequisites",
-    width: 300,
+    width: 400,
     valueGetter: (value: Course[]) => {
       return value.map((c) => c.code).join(", ");
     },

@@ -29,8 +29,8 @@ export const registerAccount = async (
 
     await newAccount.save();
     res.status(201).json({ message: "Account registered successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? "Server error", error });
   }
 };
 
@@ -59,8 +59,8 @@ export const updateAccount = async (
       message: "Account updated successfully",
       account: existingAccount,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message ?? "Server error", error });
   }
 };
 

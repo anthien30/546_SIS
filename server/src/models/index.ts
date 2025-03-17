@@ -17,16 +17,35 @@ export interface ICourse extends mongoose.Document {
   name: string;
   description?: string; // Optional field
   credits: number;
-  semester: string; // e.g., 'Fall 2025'
   isDeleted: boolean;
-  schedule: {
-    days: string[]; // e.g., ['Monday', 'Wednesday']
-    time: {
-      start: string; // e.g., '10:00 AM'
-      end: string; // e.g., '11:30 AM'
-    };
-  };
   prerequisites: ObjectId[]; // Array of references to other courses
-  instructor: ObjectId | null; // Reference to the Account entity with role 'faculty'
-  enrolledStudents: ObjectId[]; // Array of references to Account entities with role 'student'
+  // enrolledStudents: ObjectId[]; // Array of references to Account entities with role 'student'
+}
+
+export interface ICurriculum extends mongoose.Document {
+  programName: string;
+  degreeType: string;
+  major: string;
+  requiredCourses: string[];
+  electives: string[];
+  totalCreditsRequired: number;
+}
+
+type Day =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+export interface ISchedule extends mongoose.Document {
+  course: ObjectId;
+  instructor: ObjectId;
+  term: string;
+  days: Day[];
+  startTime: string;
+  endTime: string;
+  location: string;
+  maxEnrollment: number;
 }

@@ -46,7 +46,6 @@ const CourseEditDialog = ({
   );
 
   const prerequisites = watch("prerequisites");
-  const semester = watch("semester");
   const code = watch("code");
 
   const updateCourse = (data: Course) => {
@@ -169,7 +168,7 @@ const CourseEditDialog = ({
           </Row>
 
           <Row>
-            <Col sm={6}>
+            <Col sm={12}>
               <FormGroup className="mb-4">
                 <Form.Label className="fw-bold">Credits</Form.Label>
                 <Form.Control
@@ -183,39 +182,6 @@ const CourseEditDialog = ({
                 />
                 <Form.Text className="text-danger">
                   {errors.credits?.message}
-                </Form.Text>
-              </FormGroup>
-            </Col>
-
-            <Col sm={6}>
-              <FormGroup className="mb-4">
-                <Form.Label className="fw-bold">Semester</Form.Label>
-                <div className="d-flex">
-                  <Autocomplete
-                    {...register("semester", {
-                      required: "Semester is required",
-                    })}
-                    sx={{
-                      width: "100%",
-                      ".MuiInputBase-formControl": {
-                        height: "38px",
-                      },
-                      ".MuiInputBase-input": {
-                        padding: "0.6rem",
-                      },
-                    }}
-                    options={["Fall 2026", "Winter 2027", "Spring 2027"]}
-                    renderInput={(params) => (
-                      <TextField {...params} placeholder="Semester" />
-                    )}
-                    onChange={(_, value) => {
-                      setValue("semester", value);
-                    }}
-                    value={semester}
-                  />
-                </div>
-                <Form.Text className="text-danger">
-                  {errors.semester?.message}
                 </Form.Text>
               </FormGroup>
             </Col>

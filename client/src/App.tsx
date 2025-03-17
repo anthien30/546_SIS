@@ -22,6 +22,9 @@ const AcademicTermsView = React.lazy(
 const CoursesView = React.lazy(
   () => import("./components/Courses/CoursesView")
 );
+const SchedulesView = React.lazy(
+  () => import("./components/Schedules/SchedulesView")
+);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -67,6 +70,7 @@ function App() {
                 />
                 <Route path="/academic-terms" element={<AcademicTermsView />} />
                 <Route path="/courses" element={<CoursesView />} />
+                <Route path="/schedules" element={<SchedulesView />} />
               </Route>
             )}
 
