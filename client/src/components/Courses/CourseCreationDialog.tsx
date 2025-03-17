@@ -86,9 +86,12 @@ const CourseCreationDialog = ({
     prerequisites,
   ]);
 
-  const handleClose = () => setIsOpen(false);
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedPrerequisites([]);
+  };
 
-  useEffect(() => reset(), [isOpen, reset]);
+  useEffect(() => reset({}), [isOpen, reset]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
