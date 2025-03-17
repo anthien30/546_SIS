@@ -10,8 +10,10 @@ const CoursesView = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isCreationOpen, setIsCreationOpen] = useState(false);
   const [openCourse, setOpenCourse] = useState<Course | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const searchCourses = async (filtersJson: { [key: string]: any }) => {
+    setIsSearching(true);
     const queryStr = new URLSearchParams(filtersJson).toString();
     try {
       const response = await axiosInstance.get<Course[]>(
@@ -20,6 +22,8 @@ const CoursesView = () => {
       setCourses(response.data.map((a) => ({ ...a, id: a._id })));
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -37,6 +41,7 @@ const CoursesView = () => {
 
       <CoursesDataGrid
         data={courses}
+        loading={isSearching}
         displayCreationForm={() => setIsCreationOpen(true)}
         displayEditForm={(course) => setOpenCourse(course)}
       />

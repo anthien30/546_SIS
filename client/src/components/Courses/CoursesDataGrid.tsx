@@ -12,11 +12,13 @@ type CoursesDataGridProps = {
   data: Course[];
   displayCreationForm: () => void;
   displayEditForm: (course: Course) => void;
+  loading: boolean;
 };
 const CoursesDataGrid = ({
   data,
   displayCreationForm,
   displayEditForm,
+  loading,
 }: CoursesDataGridProps) => {
   function CustomToolbar() {
     return (
@@ -37,10 +39,17 @@ const CoursesDataGrid = ({
   return (
     <div style={{ flex: "1", maxHeight: "calc(100vh - 230px)" }}>
       <DataGrid
+        loading={loading}
         columns={coursesDataGridColumns}
         rows={data}
         slots={{
           toolbar: CustomToolbar,
+        }}
+        slotProps={{
+          loadingOverlay: {
+            variant: "linear-progress",
+            noRowsVariant: "skeleton",
+          },
         }}
         disableAutosize
         disableColumnFilter

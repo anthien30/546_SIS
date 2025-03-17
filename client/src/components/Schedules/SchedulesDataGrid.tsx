@@ -12,9 +12,11 @@ type SchedulesDataGridProps = {
   data: Schedule[];
   displayCreationForm: () => void;
   displayEditForm: (schedule: Schedule) => void;
+  loading: boolean;
 };
 const SchedulesDataGrid = ({
   data,
+  loading,
   displayCreationForm,
   displayEditForm,
 }: SchedulesDataGridProps) => {
@@ -37,10 +39,17 @@ const SchedulesDataGrid = ({
   return (
     <div style={{ flex: "1", maxHeight: "calc(100vh - 230px)" }}>
       <DataGrid
+        loading={loading}
         columns={schedulesDataGridColumns}
         rows={data}
         slots={{
           toolbar: CustomToolbar,
+        }}
+        slotProps={{
+          loadingOverlay: {
+            variant: "linear-progress",
+            noRowsVariant: "skeleton",
+          },
         }}
         disableAutosize
         disableColumnFilter

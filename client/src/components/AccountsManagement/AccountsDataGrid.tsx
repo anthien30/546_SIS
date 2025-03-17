@@ -12,27 +12,19 @@ type AccountsDataGridProps = {
   data: Account[];
   displayCreationForm: () => void;
   displayEditForm: (account: Account) => void;
+  loading: boolean;
 };
 const AccountsDataGrid = ({
   data,
   displayCreationForm,
   displayEditForm,
+  loading,
 }: AccountsDataGridProps) => {
   function CustomToolbar() {
     return (
-      <GridToolbarContainer
-        sx={{
-          background: "#F0F8FF",
-        }}
-      >
+      <GridToolbarContainer sx={{ background: "#F0F8FF" }}>
         <GridToolbarColumnsButton />
         <Box sx={{ flexGrow: 1 }} />
-        {/* <GridToolbarExport
-          slotProps={{
-            tooltip: { title: "Export data" },
-            button: { variant: "outlined" },
-          }}
-        /> */}
         <Button onClick={displayCreationForm}>
           <AddIcon /> New Account
         </Button>
@@ -43,10 +35,17 @@ const AccountsDataGrid = ({
   return (
     <div style={{ flex: "1", maxHeight: "calc(100vh - 230px)" }}>
       <DataGrid
+        loading={loading}
         columns={accountsDataGridColumns}
         rows={data}
         slots={{
           toolbar: CustomToolbar,
+        }}
+        slotProps={{
+          loadingOverlay: {
+            variant: "linear-progress",
+            noRowsVariant: "skeleton",
+          },
         }}
         disableAutosize
         disableColumnFilter

@@ -10,8 +10,10 @@ const AccountsManagementView = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isCreationOpen, setIsCreationOpen] = useState(false);
   const [openAccount, setOpenAccount] = useState<Account | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const searchAccounts = async (filtersJson: { [key: string]: any }) => {
+    setIsSearching(true);
     const queryStr = new URLSearchParams(filtersJson).toString();
     try {
       const response = await axiosInstance.get<Account[]>(
@@ -20,6 +22,8 @@ const AccountsManagementView = () => {
       setAccounts(response.data.map((a) => ({ ...a, id: a._id })));
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -36,6 +40,7 @@ const AccountsManagementView = () => {
       </div>
 
       <AccountsDataGrid
+        loading={isSearching}
         data={accounts}
         displayCreationForm={() => setIsCreationOpen(true)}
         displayEditForm={(account) => setOpenAccount(account)}

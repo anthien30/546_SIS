@@ -4,15 +4,16 @@ import axiosInstance from "../../config/axiosInstance";
 import SchedulesDataGrid from "./SchedulesDataGrid";
 import { Schedule } from "./models";
 import ScheduleCreationDialog from "./ScheduleCreationDialog";
-import ScheduleEdit from "./ScheduleEditDialog";
 import ScheduleEditDialog from "./ScheduleEditDialog";
 
 const SchedulesView = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [isCreationOpen, setIsCreationOpen] = useState(false);
   const [openSchedule, setOpenSchedule] = useState<Schedule | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const searchSchedules = async (filtersJson: { [key: string]: any }) => {
+    setIsSearching(true);
     const queryStr = new URLSearchParams(filtersJson).toString();
     try {
       const response = await axiosInstance.get<Schedule[]>(
@@ -21,6 +22,8 @@ const SchedulesView = () => {
       setSchedules(response.data.map((a) => ({ ...a, id: a._id })));
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -38,6 +41,7 @@ const SchedulesView = () => {
 
       <SchedulesDataGrid
         data={schedules}
+        loading={isSearching}
         displayCreationForm={() => setIsCreationOpen(true)}
         displayEditForm={(course) => setOpenSchedule(course)}
       />

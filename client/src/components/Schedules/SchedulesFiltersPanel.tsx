@@ -12,15 +12,12 @@ const SchedulesFiltersPanel = ({
 }: SchedulesFiltersPanelProps) => {
   const [course, setCourse] = useState<Course | null>(null);
   const [term, setTerm] = useState("");
-  const [instructor, setInstructor] = useState("");
   const [coursesOptions, setCoursesOptions] = useState<Course[]>([]);
 
   const handleClick = () => {
     const filtersData: any = {};
     if (course) filtersData.course = course._id;
     if (term) filtersData.term = term;
-
-    console.log(filtersData);
 
     searchSchedules(filtersData);
   };
