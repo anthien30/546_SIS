@@ -23,12 +23,12 @@ export interface ICourse extends mongoose.Document {
 }
 
 export interface ICurriculum extends mongoose.Document {
-  programName: string;
-  degreeType: string;
-  major: string;
-  requiredCourses: string[];
+  name: string;
+  // degreeType: string;
+  // major: string;
+  courses: string[];
   electives: string[];
-  totalCreditsRequired: number;
+  creditsRequired: number;
 }
 
 type Day =

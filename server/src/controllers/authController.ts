@@ -13,7 +13,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     }
 
     const token = generateToken(account.username);
-    res.json({ token });
+    res.json({ token, role: account.role });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

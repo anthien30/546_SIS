@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { CircularProgress } from "@mui/material";
+import { userPermissionService } from "./components/Common/subjects/userPermissionSubject";
 
 const MainLayout = React.lazy(
   () => import("./components/MainLayout/MainLayout")
@@ -24,6 +25,10 @@ const CoursesView = React.lazy(
 );
 const SchedulesView = React.lazy(
   () => import("./components/Schedules/SchedulesView")
+);
+
+const CurriculumsView = React.lazy(
+  () => import("./components/Curriculums/CurriculumsView")
 );
 
 function App() {
@@ -64,12 +69,20 @@ function App() {
             {isAuthenticated && (
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Dashboard />} />
-                <Route
-                  path="/accounts-management"
-                  element={<AccountsManagementView />}
-                />
-                <Route path="/academic-terms" element={<AcademicTermsView />} />
+                {userPermissionService.isAdmin() && (
+                  <Route
+                    path="/accounts-management"
+                    element={<AccountsManagementView />}
+                  />
+                )}
+                {userPermissionService.isAdmin() && (
+                  <Route
+                    path="/academic-terms"
+                    element={<AcademicTermsView />}
+                  />
+                )}
                 <Route path="/courses" element={<CoursesView />} />
+                <Route path="/curriculums" element={<CurriculumsView />} />
                 <Route path="/schedules" element={<SchedulesView />} />
               </Route>
             )}

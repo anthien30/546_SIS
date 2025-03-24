@@ -21,6 +21,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 403) {
       alert("Session expired. Please log in again.");
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
       window.location.href = "/login"; // Redirect to login page
     }
     return Promise.reject(error);
