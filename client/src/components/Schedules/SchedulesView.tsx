@@ -1,77 +1,68 @@
-import { useEffect, useState } from "react";
-import SchedulesFiltersPanel from "./SchedulesFiltersPanel";
-import axiosInstance from "../../config/axiosInstance";
-import SchedulesDataGrid from "./SchedulesDataGrid";
-import { Schedule } from "./models";
-import ScheduleCreationDialog from "./ScheduleCreationDialog";
-import ScheduleEditDialog from "./ScheduleEditDialog";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import SchedulesViewSearch from "./SchedulesViewSearch";
 import { userPermissionService } from "../Common/subjects/userPermissionSubject";
-import ScheduleEnrollmentDialog from "./ScheduleEnrollmentDialog";
+import SchedulesViewMyCourses from "./SchedulesViewMyCourses";
 
 const SchedulesView = () => {
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [isCreationOpen, setIsCreationOpen] = useState(false);
-  const [openSchedule, setOpenSchedule] = useState<Schedule | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
+  const [value, setValue] = useState("1");
 
-  const searchSchedules = async (filtersJson: { [key: string]: any }) => {
-    setIsSearching(true);
-    const queryStr = new URLSearchParams(filtersJson).toString();
-    try {
-      const response = await axiosInstance.get<Schedule[]>(
-        `/api/schedule/search?${queryStr}`
-      );
-      setSchedules(response.data.map((a) => ({ ...a, id: a._id })));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSearching(false);
-    }
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
   };
-
-  useEffect(() => {
-    searchSchedules({});
-  }, []);
 
   return (
     <div className="moduleWrapper">
       <h3 className="mb-4">Schedules</h3>
 
-      <div className="mb-4">
-        <SchedulesFiltersPanel searchSchedules={searchSchedules} />
-      </div>
-
-      <SchedulesDataGrid
-        data={schedules}
-        loading={isSearching}
-        displayCreationForm={() => setIsCreationOpen(true)}
-        displayEditForm={(course) => setOpenSchedule(course)}
-      />
-
-      {userPermissionService.isAdmin() && (
-        <>
-          <ScheduleCreationDialog
-            searchSchedules={(filters) => searchSchedules(filters)}
-            isOpen={isCreationOpen}
-            setIsOpen={setIsCreationOpen}
-          />
-
-          <ScheduleEditDialog
-            searchSchedules={(filters) => searchSchedules(filters)}
-            schedule={openSchedule}
-            setSchedule={setOpenSchedule}
-          />
-        </>
-      )}
-
-      {userPermissionService.isStudent() && (
-        <>
-          <ScheduleEnrollmentDialog
-            searchSchedules={(filters) => searchSchedules(filters)}
-            schedule={openSchedule}
-            setSchedule={setOpenSchedule}
-          />
-        </>
+      {userPermissionService.isAdmin() ? (
+        <SchedulesViewSearch />
+      ) : (
+        <div style={{ flex: "1" }}>
+          <Box sx={{ width: "100%", typography: "body1", height: "100%" }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={handleChange}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="Search" value="1" />
+                  <Tab label="My Courses" value="2" />
+                </TabList>
+              </Box>
+              <TabPanel
+                sx={{
+                  padding: 0,
+                  paddingTop: "1rem",
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+                value="1"
+              >
+                <SchedulesViewSearch />
+              </TabPanel>
+              <TabPanel
+                sx={{
+                  padding: 0,
+                  paddingTop: "1rem",
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+                value="2"
+              >
+                <SchedulesViewMyCourses />
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </div>
       )}
     </div>
   );

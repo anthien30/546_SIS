@@ -31,7 +31,8 @@ const ScheduleEnrollmentDialog = ({
   const [loading, setLoading] = useState(false);
 
   const prerequisites = getValues("course.prerequisites");
-  const isEnrolled = getValues("enrolledStudents")?.includes(
+  const enrolledStudents = getValues("enrolledStudents");
+  const isEnrolled = enrolledStudents?.includes(
     meService.getData()?._id as any
   );
 
@@ -183,7 +184,9 @@ const ScheduleEnrollmentDialog = ({
         )}
         {!isEnrolled && (
           <Button
-            disabled={loading}
+            disabled={
+              loading || enrolledStudents?.length >= getValues("maxEnrollment")
+            }
             onClick={handleSubmit((data) =>
               handleCourseEnrollmentAction(data, true)
             )}

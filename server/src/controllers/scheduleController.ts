@@ -28,13 +28,14 @@ export const searchSchedule = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { term, course, sortBy, sortOrder, limit } = req.query;
+    const { term, course, studentId, sortBy, sortOrder, limit } = req.query;
 
     const filters: any = {};
     // if (term) filters.term = { $regex: term, $options: "i" };
     // if (course) filters.course = { $regex: course, $options: "i" };
     if (term) filters.term = term;
     if (course) filters.course = course;
+    if (studentId) filters.enrolledStudents = { $in: [studentId] };
     // if (codeOrName)
     //   filters["$or"] = [
     //     { code: { $regex: codeOrName, $options: "i" } },
