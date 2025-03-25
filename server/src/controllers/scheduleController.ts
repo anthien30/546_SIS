@@ -51,7 +51,12 @@ export const searchSchedule = async (
     // Fetch accounts from the database with the applied filters and sorting
     let schedulesQuery = Schedule.find(filters)
       .sort(sortOptions)
-      .populate("course");
+      .populate({
+        path: "course",
+        populate: {
+          path: "prerequisites",
+        },
+      });
     if (limit) schedulesQuery = schedulesQuery.limit(limit as any);
     const courses = await schedulesQuery;
 
@@ -66,8 +71,16 @@ export const updateSchedule = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { id, term, course, startTime, endTime, days, location } =
-    req.body as ISchedule;
+  const {
+    id,
+    term,
+    course,
+    startTime,
+    endTime,
+    days,
+    location,
+    enrolledStudents,
+  } = req.body as ISchedule;
 
   const existingSchedule = await Schedule.findById(id);
 
@@ -82,6 +95,7 @@ export const updateSchedule = async (
   existingSchedule.startTime = startTime;
   existingSchedule.endTime = endTime;
   existingSchedule.location = location;
+  existingSchedule.enrolledStudents = enrolledStudents;
 
   await existingSchedule.save();
 

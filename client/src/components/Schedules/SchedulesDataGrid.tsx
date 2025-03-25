@@ -7,6 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Box, Button } from "@mui/material";
 import { schedulesDataGridColumns } from "./SchedulesDataGrid.metadata";
 import { Schedule } from "./models";
+import { userPermissionService } from "../Common/subjects/userPermissionSubject";
 
 type SchedulesDataGridProps = {
   data: Schedule[];
@@ -29,9 +30,11 @@ const SchedulesDataGrid = ({
       >
         <GridToolbarColumnsButton />
         <Box sx={{ flexGrow: 1 }} />
-        <Button className="text-capitalize" onClick={displayCreationForm}>
-          <AddIcon /> Add Schedule
-        </Button>
+        {userPermissionService.isAdmin() && (
+          <Button className="text-capitalize" onClick={displayCreationForm}>
+            <AddIcon /> Add Schedule
+          </Button>
+        )}
       </GridToolbarContainer>
     );
   }

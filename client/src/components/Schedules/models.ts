@@ -19,5 +19,6 @@ export interface Schedule {
   startTime: string | null;
   endTime: string | null;
   location: string | null;
-  maxEnrollment: number | null;
+  maxEnrollment: number;
+  enrolledStudents: (string | Account)[];
 }

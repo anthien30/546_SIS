@@ -46,8 +46,12 @@ const DrawerMenu = ({ isOpen, drawerWidth }: DrawerMenuProps) => {
           {userPermissionService.isAdmin() && (
             <MenuItem to="/academic-terms" text="Academic Terms" />
           )}
-          <MenuItem to="/courses" text="Courses" />
-          <MenuItem to="/curriculums" text="Curriculums" />
+          {userPermissionService.isAdmin() && (
+            <MenuItem to="/courses" text="Courses" />
+          )}
+          {userPermissionService.isAdmin() && (
+            <MenuItem to="/curriculums" text="Curriculums" />
+          )}
           <MenuItem to="/schedules" text="Schedules" />
         </List>
       </Box>

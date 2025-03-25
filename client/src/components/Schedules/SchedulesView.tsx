@@ -5,6 +5,8 @@ import SchedulesDataGrid from "./SchedulesDataGrid";
 import { Schedule } from "./models";
 import ScheduleCreationDialog from "./ScheduleCreationDialog";
 import ScheduleEditDialog from "./ScheduleEditDialog";
+import { userPermissionService } from "../Common/subjects/userPermissionSubject";
+import ScheduleEnrollmentDialog from "./ScheduleEnrollmentDialog";
 
 const SchedulesView = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -46,17 +48,31 @@ const SchedulesView = () => {
         displayEditForm={(course) => setOpenSchedule(course)}
       />
 
-      <ScheduleCreationDialog
-        searchSchedules={(filters) => searchSchedules(filters)}
-        isOpen={isCreationOpen}
-        setIsOpen={setIsCreationOpen}
-      />
+      {userPermissionService.isAdmin() && (
+        <>
+          <ScheduleCreationDialog
+            searchSchedules={(filters) => searchSchedules(filters)}
+            isOpen={isCreationOpen}
+            setIsOpen={setIsCreationOpen}
+          />
 
-      <ScheduleEditDialog
-        searchSchedules={(filters) => searchSchedules(filters)}
-        schedule={openSchedule}
-        setSchedule={setOpenSchedule}
-      />
+          <ScheduleEditDialog
+            searchSchedules={(filters) => searchSchedules(filters)}
+            schedule={openSchedule}
+            setSchedule={setOpenSchedule}
+          />
+        </>
+      )}
+
+      {userPermissionService.isStudent() && (
+        <>
+          <ScheduleEnrollmentDialog
+            searchSchedules={(filters) => searchSchedules(filters)}
+            schedule={openSchedule}
+            setSchedule={setOpenSchedule}
+          />
+        </>
+      )}
     </div>
   );
 };

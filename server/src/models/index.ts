@@ -48,4 +48,5 @@ export interface ISchedule extends mongoose.Document {
   endTime: string;
   location: string;
   maxEnrollment: number;
+  enrolledStudents: ObjectId[];
 }

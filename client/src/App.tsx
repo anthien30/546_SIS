@@ -8,6 +8,9 @@ import {
 import "./App.css";
 import { CircularProgress } from "@mui/material";
 import { userPermissionService } from "./components/Common/subjects/userPermissionSubject";
+import axiosInstance from "./config/axiosInstance";
+import { Account } from "./components/AccountsManagement/models";
+import { meService } from "./components/Common/subjects/meSubject";
 
 const MainLayout = React.lazy(
   () => import("./components/MainLayout/MainLayout")
@@ -36,9 +39,29 @@ function App() {
     () => !!localStorage.getItem("token")
   );
 
+  const fetchMyAccount = async () => {
+    // setIsSearching(true);
+    const queryStr = new URLSearchParams({
+      username: localStorage.getItem("username")!,
+    }).toString();
+    try {
+      const { data } = await axiosInstance.get<Account[]>(
+        `/api/account/search?${queryStr}`
+      );
+      if (data.length) {
+        meService.set({ data: data[0] });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // setIsSearching(false);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+    fetchMyAccount();
   }, []);
 
   return (
@@ -81,8 +104,12 @@ function App() {
                     element={<AcademicTermsView />}
                   />
                 )}
-                <Route path="/courses" element={<CoursesView />} />
-                <Route path="/curriculums" element={<CurriculumsView />} />
+                {userPermissionService.isAdmin() && (
+                  <Route path="/courses" element={<CoursesView />} />
+                )}
+                {userPermissionService.isAdmin() && (
+                  <Route path="/curriculums" element={<CurriculumsView />} />
+                )}
                 <Route path="/schedules" element={<SchedulesView />} />
               </Route>
             )}

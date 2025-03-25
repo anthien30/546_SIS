@@ -23,6 +23,7 @@ const LoginScreen = () => {
       const { data } = await axios.post(`${API_URL}/api/login`, credentials);
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      localStorage.setItem("username", credentials.username!);
       window.location.href = "/";
     } catch (error) {
       if (axios.isAxiosError(error))

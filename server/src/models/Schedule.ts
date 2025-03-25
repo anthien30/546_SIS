@@ -44,10 +44,9 @@ const ScheduleSchema = new mongoose.Schema<ISchedule>({
     type: Number,
     default: 30,
   }, // Maximum students allowed
-  //   currentEnrollment: {
-  //     type: Number,
-  //     default: 0,
-  //   }, // Track how many students are currently enrolled
+  enrolledStudents: {
+    type: [mongoose.Schema.Types.ObjectId],
+  },
 });
 
 const Schedule = mongoose.model<ISchedule>("Schedule", ScheduleSchema);

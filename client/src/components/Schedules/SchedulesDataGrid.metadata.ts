@@ -1,25 +1,26 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { Course } from "../Courses/models";
 import { Schedule } from "./models";
-
-function formatTime(hour: string) {
-  const hourInt = parseInt(hour, 10); // Convert string to integer
-  const period = hourInt >= 12 ? "PM" : "AM";
-  const formattedHour = hourInt % 12 || 12; // Convert 0 or 12+ to 12-hour format
-  return `${formattedHour}:00 ${period}`;
-}
+import { formatTime } from "../../utils/datetime";
 
 export const schedulesDataGridColumns: GridColDef[] = [
   {
     field: "term",
     headerName: "Term",
-    width: 200,
+    width: 150,
   },
   {
     field: "course",
     headerName: "Course",
-    width: 500,
+    width: 300,
     valueGetter: (value: Course) => `${value.code} - ${value.name}`,
+  },
+  {
+    field: "enrolledStudents",
+    headerName: "Enrollment",
+    width: 150,
+    valueGetter: (studentIds: any[], data: Schedule) =>
+      `${studentIds.length}/${data.maxEnrollment}`,
   },
   {
     field: "schedule",

@@ -22,6 +22,7 @@ axiosInstance.interceptors.response.use(
       alert("Session expired. Please log in again.");
       localStorage.removeItem("token");
       localStorage.removeItem("role");
+      localStorage.removeItem("username");
       window.location.href = "/login"; // Redirect to login page
     }
     return Promise.reject(error);
