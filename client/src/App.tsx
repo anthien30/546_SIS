@@ -49,7 +49,11 @@ function App() {
         `/api/account/search?${queryStr}`
       );
       if (data.length) {
-        meService.set({ data: data[0] });
+        meService.set({
+          data:
+            data.find((i) => i.username === localStorage.getItem("username")) ??
+            null,
+        });
       }
     } catch (error) {
       console.error(error);

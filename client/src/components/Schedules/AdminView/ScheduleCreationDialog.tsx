@@ -11,42 +11,39 @@ import {
 import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
-import axiosInstance from "../../config/axiosInstance";
-import { notificationService } from "../Common/Notification/notificationSubject";
-import { Schedule } from "./models";
-import { Course } from "../Courses/models";
-import { confirmationService } from "../Common/ConfirmationDialog/confirmationDialogSubject";
+import axiosInstance from "../../../config/axiosInstance";
+import { notificationService } from "../../Common/Notification/notificationSubject";
+import { Schedule } from "../models";
+import { Course } from "../../Courses/models";
+import { Account } from "../../AccountsManagement/models";
 
-type ScheduleEditDialogProps = {
-  schedule: Schedule | null;
-  setSchedule: (schedule: Schedule | null) => void;
+type ScheduleCreationDialogProps = {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   searchSchedules: (filters: { [key: string]: string }) => void;
 };
-const ScheduleEditDialog = ({
-  schedule,
-  setSchedule,
+const ScheduleCreationDialog = ({
+  isOpen,
+  setIsOpen,
   searchSchedules,
-}: ScheduleEditDialogProps) => {
+}: ScheduleCreationDialogProps) => {
   const {
     register,
-    formState: { errors, dirtyFields },
-    getValues,
+    formState: { errors },
     handleSubmit,
     reset,
     setValue,
   } = useForm<Schedule>({ mode: "all" });
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [instructors, setInstructors] = useState<Account[]>([]);
 
-  const updateSchedule = (data: Schedule) => {
-    if (Object.keys(dirtyFields).length === 0)
-      return notificationService.success("No changes were made");
-
+  const createSchedule = (data: Schedule) => {
     setLoading(true);
     axiosInstance
-      .post("/api/schedule/update", data)
+      .post("/api/schedule/create", data)
       .then(() => {
-        notificationService.success("Account updated");
+        notificationService.success("Schedule created");
         searchSchedules({});
         handleClose();
       })
@@ -57,23 +54,6 @@ const ScheduleEditDialog = ({
         );
       })
       .finally(() => setLoading(false));
-  };
-
-  const deleteSchedule = async () => {
-    setLoading(true);
-    try {
-      await axiosInstance.delete(`/api/schedule/delete?id=${schedule?._id}`);
-      notificationService.success("Schedule deleted!");
-      searchSchedules({});
-      handleClose();
-    } catch (error: any) {
-      console.error(error);
-      notificationService.error(
-        error.response?.data?.message ?? "Something went wrong"
-      );
-    } finally {
-      setLoading(false);
-    }
   };
 
   const searchCourses = async (courseCodeOrName: string | null) => {
@@ -94,15 +74,42 @@ const ScheduleEditDialog = ({
       console.error(error);
     }
   };
+
+  const searchInstructor = async (username: string) => {
+    const queryStr = new URLSearchParams({
+      username: username,
+      role: "Faculty",
+      limit: "10",
+    }).toString();
+    try {
+      const response = await axiosInstance.get<Account[]>(
+        `/api/account/search?${queryStr}`
+      );
+      setInstructors(response.data);
+    } catch (error) {
+      notificationService.error(
+        "Something went wrong while searching for instructor"
+      );
+      console.error(error);
+    }
+  };
+
   const debouncedSearchCourses = useCallback(debounce(searchCourses, 500), []);
 
-  const handleClose = () => setSchedule(null);
+  const debouncedSearchInstructors = useCallback(
+    debounce(searchInstructor, 500),
+    []
+  );
 
-  useEffect(() => reset({ ...schedule }), [schedule, reset]);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  useEffect(() => reset({}), [isOpen, reset]);
 
   return (
-    <Dialog open={!!schedule} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>Schedule Details</DialogTitle>
+    <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
+      <DialogTitle>New Schedule</DialogTitle>
       <DialogContent>
         <Form className="position-relative">
           <Row>
@@ -122,12 +129,8 @@ const ScheduleEditDialog = ({
                   )}
                   options={["Fall 2026", "Winter 2027", "Spring 2027"]}
                   onChange={(_, value) =>
-                    setValue("term", value, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
+                    setValue("term", value, { shouldValidate: true })
                   }
-                  value={getValues("term")}
                 />
                 <Form.Text className="text-danger">
                   {errors.term?.message}
@@ -147,9 +150,7 @@ const ScheduleEditDialog = ({
                     },
                   }}
                   autoComplete
-                  getOptionLabel={(option: Course) =>
-                    `${option?.code} - ${option?.name}`
-                  }
+                  getOptionLabel={(option) => `${option.code} - ${option.name}`}
                   options={courses}
                   filterOptions={(x) => x}
                   onInputChange={(_, inputVal) => {
@@ -159,12 +160,8 @@ const ScheduleEditDialog = ({
                     <TextField {...params} placeholder="Type to search" />
                   )}
                   onChange={(_, value) =>
-                    setValue("course", value, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
+                    setValue("course", value, { shouldValidate: true })
                   }
-                  value={getValues("course") as any}
                 />
                 <Form.Text className="text-danger">
                   {errors.course?.message}
@@ -206,12 +203,8 @@ const ScheduleEditDialog = ({
                     <TextField {...params} placeholder="" />
                   )}
                   onChange={(_, value) =>
-                    setValue("days", value as any, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
+                    setValue("days", value as any, { shouldValidate: true })
                   }
-                  value={getValues("days")}
                 />
                 <Form.Text className="text-danger">
                   {errors.days?.message}
@@ -265,7 +258,7 @@ const ScheduleEditDialog = ({
           </Row>
 
           <Row>
-            <Col sm={12}>
+            <Col sm={6}>
               <FormGroup className="mb-4">
                 <Form.Label className="fw-bold">Location</Form.Label>
                 <TextField
@@ -279,6 +272,38 @@ const ScheduleEditDialog = ({
                   placeholder="Location"
                   type="text"
                 />
+              </FormGroup>
+            </Col>
+
+            <Col sm={6}>
+              <FormGroup className="mb-4">
+                <Form.Label className="fw-bold">Instructor</Form.Label>
+                <Autocomplete
+                  {...register("instructor", {
+                    required: "Instructor is required",
+                  })}
+                  sx={{
+                    width: "100%",
+                    ".MuiInputBase-formControl": {
+                      height: "38px",
+                    },
+                  }}
+                  filterOptions={(x) => x}
+                  getOptionLabel={(option) => `${option.username}`}
+                  renderInput={(params) => (
+                    <TextField {...params} placeholder="Instructor" />
+                  )}
+                  options={instructors}
+                  onInputChange={(_, inputVal) => {
+                    debouncedSearchInstructors(inputVal);
+                  }}
+                  onChange={(_, value) =>
+                    setValue("instructor", value, { shouldValidate: true })
+                  }
+                />
+                <Form.Text className="text-danger">
+                  {errors.instructor?.message}
+                </Form.Text>
               </FormGroup>
             </Col>
           </Row>
@@ -313,19 +338,6 @@ const ScheduleEditDialog = ({
       >
         <Button
           disabled={loading}
-          onClick={() => {
-            confirmationService.confirm({
-              title: "Deleting schedule",
-              message: "Are you sure you want to delete this schedule?",
-              onConfirmHandler: () => deleteSchedule,
-            });
-          }}
-          className="btn-danger"
-        >
-          Delete
-        </Button>
-        <Button
-          disabled={loading}
           onClick={handleClose}
           className="btn-secondary"
         >
@@ -333,14 +345,14 @@ const ScheduleEditDialog = ({
         </Button>
         <Button
           disabled={loading}
-          onClick={handleSubmit(updateSchedule)}
+          onClick={handleSubmit(createSchedule)}
           className="btn-primary"
         >
-          Save
+          Create
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default ScheduleEditDialog;
+export default ScheduleCreationDialog;

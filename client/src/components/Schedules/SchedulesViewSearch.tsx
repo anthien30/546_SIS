@@ -3,10 +3,10 @@ import SchedulesFiltersPanel from "./SchedulesFiltersPanel";
 import axiosInstance from "../../config/axiosInstance";
 import SchedulesDataGrid from "./SchedulesDataGrid";
 import { Schedule } from "./models";
-import ScheduleCreationDialog from "./ScheduleCreationDialog";
-import ScheduleEditDialog from "./ScheduleEditDialog";
+import ScheduleCreationDialog from "./AdminView/ScheduleCreationDialog";
+import ScheduleEditDialog from "./AdminView/ScheduleEditDialog";
 import { userPermissionService } from "../Common/subjects/userPermissionSubject";
-import ScheduleEnrollmentDialog from "./ScheduleEnrollmentDialog";
+import ScheduleEnrollmentDialog from "./StudentView/ScheduleEnrollmentDialog";
 
 const SchedulesViewSearch = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);

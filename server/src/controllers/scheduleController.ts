@@ -6,7 +6,7 @@ export const createSchedule = async (
   req: Request,
   res: Response
 ): Promise<any> => {
-  const { course, term, days, location, startTime, endTime } =
+  const { course, term, days, location, startTime, endTime, instructor } =
     req.body as ISchedule;
 
   const schedule = new Schedule({
@@ -16,6 +16,7 @@ export const createSchedule = async (
     location,
     startTime,
     endTime,
+    instructor,
   });
 
   await schedule.save();
@@ -28,7 +29,8 @@ export const searchSchedule = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { term, course, studentId, sortBy, sortOrder, limit } = req.query;
+    const { term, course, studentId, instructor, sortBy, sortOrder, limit } =
+      req.query;
 
     const filters: any = {};
     // if (term) filters.term = { $regex: term, $options: "i" };
@@ -36,6 +38,7 @@ export const searchSchedule = async (
     if (term) filters.term = term;
     if (course) filters.course = course;
     if (studentId) filters.enrolledStudents = { $in: [studentId] };
+    if (instructor) filters.instructor = instructor;
     // if (codeOrName)
     //   filters["$or"] = [
     //     { code: { $regex: codeOrName, $options: "i" } },
@@ -57,7 +60,8 @@ export const searchSchedule = async (
         populate: {
           path: "prerequisites",
         },
-      });
+      })
+      .populate(["instructor", "enrolledStudents"]);
     if (limit) schedulesQuery = schedulesQuery.limit(limit as any);
     const courses = await schedulesQuery;
 
@@ -81,6 +85,7 @@ export const updateSchedule = async (
     days,
     location,
     enrolledStudents,
+    instructor,
   } = req.body as ISchedule;
 
   const existingSchedule = await Schedule.findById(id);
@@ -96,6 +101,7 @@ export const updateSchedule = async (
   existingSchedule.startTime = startTime;
   existingSchedule.endTime = endTime;
   existingSchedule.location = location;
+  existingSchedule.instructor = instructor;
   existingSchedule.enrolledStudents = enrolledStudents;
 
   await existingSchedule.save();

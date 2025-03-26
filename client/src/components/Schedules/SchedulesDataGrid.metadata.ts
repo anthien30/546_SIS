@@ -2,6 +2,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { Course } from "../Courses/models";
 import { Schedule } from "./models";
 import { formatTime } from "../../utils/datetime";
+import { Account } from "../AccountsManagement/models";
 
 export const schedulesDataGridColumns: GridColDef[] = [
   {
@@ -37,11 +38,10 @@ export const schedulesDataGridColumns: GridColDef[] = [
     headerName: "Location",
     width: 200,
   },
-
-  // {
-  //   field: "instructor",
-  //   headerName: "Instructor",
-  //   width: 200,
-  //   valueGetter: (value) => value ?? "TBA",
-  // },
+  {
+    field: "instructor",
+    headerName: "Instructor",
+    width: 200,
+    valueGetter: (value: Account) => value?.username ?? "TBA",
+  },
 ];

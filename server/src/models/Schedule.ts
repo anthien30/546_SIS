@@ -9,7 +9,8 @@ const ScheduleSchema = new mongoose.Schema<ISchedule>({
   },
   instructor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Instructor",
+    ref: "Account",
+    required: true,
   },
   term: {
     type: String,
@@ -46,6 +47,7 @@ const ScheduleSchema = new mongoose.Schema<ISchedule>({
   }, // Maximum students allowed
   enrolledStudents: {
     type: [mongoose.Schema.Types.ObjectId],
+    ref: "Account",
   },
 });
 

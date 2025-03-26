@@ -8,12 +8,12 @@ import {
 import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../config/axiosInstance";
-import { notificationService } from "../Common/Notification/notificationSubject";
-import { Schedule } from "./models";
-import { Course } from "../Courses/models";
-import { formatTime } from "../../utils/datetime";
-import { meService } from "../Common/subjects/meSubject";
+import axiosInstance from "../../../config/axiosInstance";
+import { notificationService } from "../../Common/Notification/notificationSubject";
+import { Schedule } from "../models";
+import { Course } from "../../Courses/models";
+import { formatTime } from "../../../utils/datetime";
+import { meService } from "../../Common/subjects/meSubject";
 
 type ScheduleEnrollmentDialogProps = {
   schedule: Schedule | null;
