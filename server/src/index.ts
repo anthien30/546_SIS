@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import courseRoutes from "./routes/courseRoutes";
 import curriculumRoutes from "./routes/curriculumRoutes";
 import scheduleRoutes from "./routes/scheduleRoutes";
+import gradeRoutes from "./routes/gradeRoutes";
 import authenticateToken from "./middlewares/authenticateToken";
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use("/api/account", authenticateToken, accountRoutes);
 app.use("/api/course", authenticateToken, courseRoutes);
 app.use("/api/curriculum", authenticateToken, curriculumRoutes);
 app.use("/api/schedule", authenticateToken, scheduleRoutes);
+app.use("/api/grade", authenticateToken, gradeRoutes);
 
 app.get("/protected-route", authenticateToken, (req, res) => {
   res.json({

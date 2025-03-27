@@ -22,3 +22,12 @@ export interface Schedule {
   maxEnrollment: number;
   enrolledStudents: (string | Account)[];
 }
+
+export interface Grade {
+  _id?: string | null;
+  student: Account | string;
+  schedule: Schedule | string;
+  score: number | null;
+  maxScore: number | null;
+  event: string | null;
+}

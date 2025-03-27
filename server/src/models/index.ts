@@ -50,3 +50,11 @@ export interface ISchedule extends mongoose.Document {
   maxEnrollment: number;
   enrolledStudents: ObjectId[];
 }
+
+export interface IGrade extends mongoose.Document {
+  student: ObjectId;
+  schedule: ObjectId;
+  score: number;
+  maxScore: number;
+  event: string;
+}

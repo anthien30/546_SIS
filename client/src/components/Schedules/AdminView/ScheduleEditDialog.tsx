@@ -137,6 +137,7 @@ const ScheduleEditDialog = ({
               <FormGroup className="mb-4">
                 <Form.Label className="fw-bold">Academic Term</Form.Label>
                 <Autocomplete
+                  disabled
                   {...register("term", { required: "Term is required" })}
                   sx={{
                     width: "100%",
@@ -166,6 +167,7 @@ const ScheduleEditDialog = ({
               <FormGroup className="mb-4">
                 <Form.Label className="fw-bold">Course</Form.Label>
                 <Autocomplete
+                  disabled
                   {...register("course", { required: "Course is required" })}
                   sx={{
                     width: "100%",
