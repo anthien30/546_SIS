@@ -31,3 +31,10 @@ export interface Grade {
   maxScore: number | null;
   event: string | null;
 }
+
+export interface AcademicRecord {
+  _id: string | null;
+  student: Account | string;
+  schedule: Schedule | string;
+  grade: number | null;
+}

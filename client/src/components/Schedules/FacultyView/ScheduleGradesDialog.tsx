@@ -51,7 +51,7 @@ const ScheduleGradesDialog = ({
   };
 
   const handleClose = () => {
-    console.log("close");
+    setStudentAccount(null);
   };
 
   const saveGrades = ({ data }: { data: Grade[] }) => {
@@ -107,9 +107,9 @@ const ScheduleGradesDialog = ({
           justifyContent: "space-between",
         }}
       >
-        <span>Grades for {studentAccount?.username}</span>{" "}
+        <span>Scores for {studentAccount?.username}</span>{" "}
         <Button className="btn-light" onClick={addDefaultGrade}>
-          New Grade
+          New Score
         </Button>
       </DialogTitle>
       <DialogContent>

@@ -10,16 +10,14 @@ export interface IAccount extends mongoose.Document {
   createdBy: string | null;
 }
 
-import { ObjectId } from "mongoose";
-
 export interface ICourse extends mongoose.Document {
   code: string;
   name: string;
   description?: string; // Optional field
   credits: number;
   isDeleted: boolean;
-  prerequisites: ObjectId[]; // Array of references to other courses
-  // enrolledStudents: ObjectId[]; // Array of references to Account entities with role 'student'
+  prerequisites: mongoose.Types.ObjectId[]; // Array of references to other courses
+  // enrolledStudents: mongoose.Types.ObjectId[]; // Array of references to Account entities with role 'student'
 }
 
 export interface ICurriculum extends mongoose.Document {
@@ -40,21 +38,27 @@ type Day =
   | "Saturday"
   | "Sunday";
 export interface ISchedule extends mongoose.Document {
-  course: ObjectId;
-  instructor: ObjectId;
+  course: mongoose.Types.ObjectId;
+  instructor: mongoose.Types.ObjectId;
   term: string;
   days: Day[];
   startTime: string;
   endTime: string;
   location: string;
   maxEnrollment: number;
-  enrolledStudents: ObjectId[];
+  enrolledStudents: mongoose.Types.ObjectId[];
 }
 
 export interface IGrade extends mongoose.Document {
-  student: ObjectId;
-  schedule: ObjectId;
+  student: mongoose.Types.ObjectId;
+  schedule: mongoose.Types.ObjectId;
   score: number;
   maxScore: number;
   event: string;
+}
+
+export interface IAcademicRecord extends mongoose.Document {
+  student: mongoose.Types.ObjectId;
+  grade: number;
+  schedule: mongoose.Types.ObjectId;
 }

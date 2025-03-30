@@ -14,6 +14,7 @@ import { Schedule } from "../models";
 import { Course } from "../../Courses/models";
 import { formatTime } from "../../../utils/datetime";
 import { meService } from "../../Common/subjects/meSubject";
+import { Account } from "../../AccountsManagement/models";
 
 type ScheduleEnrollmentDialogProps = {
   schedule: Schedule | null;
@@ -32,18 +33,33 @@ const ScheduleEnrollmentDialog = ({
 
   const prerequisites = getValues("course.prerequisites");
   const enrolledStudents = getValues("enrolledStudents");
-  const isEnrolled = enrolledStudents?.includes(
-    meService.getData()?._id as any
+  const isEnrolled = enrolledStudents?.some(
+    (s) => (s as Account)._id === (meService.getData()?._id as any)
   );
 
-  const handleCourseEnrollmentAction = (data: Schedule, enroll: boolean) => {
+  const handleCourseEnrollmentAction = async (
+    data: Schedule,
+    enroll: boolean
+  ) => {
     const accountData = meService.getData();
     if (!accountData) return notificationService.error("Account data is null");
 
-    if (enroll) data.enrolledStudents.push(accountData._id);
+    const {
+      data: { isEligible },
+    } = await axiosInstance.get<{ isEligible: boolean }>(
+      `/api/course/eligibility?studentId=${accountData._id}&courseId=${
+        (schedule?.course as Course)?._id
+      }`
+    );
+    if (!isEligible)
+      return notificationService.error(
+        "You haven't fulfilled the Prerequisite(s) for this course"
+      );
+
+    if (enroll) data.enrolledStudents.push(accountData);
     else
       data.enrolledStudents = data.enrolledStudents.filter(
-        (s) => s !== accountData._id
+        (s) => (s as Account)._id !== accountData._id
       );
     enrollInCourse(data, enroll);
   };
@@ -174,8 +190,8 @@ const ScheduleEnrollmentDialog = ({
         {isEnrolled && (
           <Button
             disabled={loading}
-            onClick={handleSubmit((data) =>
-              handleCourseEnrollmentAction(data, false)
+            onClick={handleSubmit(
+              async (data) => await handleCourseEnrollmentAction(data, false)
             )}
             className="btn-secondary"
           >

@@ -2,15 +2,17 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Schedule } from "../models";
 import { useEffect, useState } from "react";
 import { Account } from "../../AccountsManagement/models";
-import { scheduled } from "rxjs";
 import ScheduleGradesDialog from "./ScheduleGradesDialog";
+import { Button } from "react-bootstrap";
+import ScheduleFinalGradeDialog from "./ScheduleFinalGradeDialog";
 
 type StudentsRosterDataGridProps = {
   schedule: Schedule;
 };
 const StudentsRosterDataGrid = ({ schedule }: StudentsRosterDataGridProps) => {
   const [data, setData] = useState<Account[]>([]);
-  const [openData, setOpenData] = useState<Account | null>(null);
+  const [openScoreData, setOpenScoreData] = useState<Account | null>(null);
+  const [openGradeData, setOpenGradeData] = useState<Account | null>(null);
 
   useEffect(() => {
     schedule?.enrolledStudents &&
@@ -20,15 +22,43 @@ const StudentsRosterDataGrid = ({ schedule }: StudentsRosterDataGridProps) => {
   return (
     <div style={{ flex: "1", maxHeight: "calc(100vh - 230px)" }}>
       <ScheduleGradesDialog
-        studentAccount={openData}
-        setStudentAccount={(args) => setOpenData(args)}
+        studentAccount={openScoreData}
+        setStudentAccount={(args) => setOpenScoreData(args)}
+        schedule={schedule}
+      />
+
+      <ScheduleFinalGradeDialog
+        studentAccount={openGradeData}
+        setStudentAccount={(args) => setOpenGradeData(args)}
         schedule={schedule}
       />
 
       <DataGrid
         // loading={loading}
         columns={[
-          { field: "username", headerName: "Student Username", width: 200 },
+          { field: "username", headerName: "Student Username", width: 400 },
+          {
+            field: "action",
+            headerName: "Actions",
+            width: 400,
+            renderCell: (data) => (
+              <div className="h-100 d-flex justify-content-between align-items-center">
+                <Button
+                  className="btn-light"
+                  onClick={() => setOpenScoreData(data.row)}
+                >
+                  Scores
+                </Button>
+
+                <Button
+                  onClick={() => setOpenGradeData(data.row)}
+                  className="btn-light"
+                >
+                  Final Grade
+                </Button>
+              </div>
+            ),
+          },
         ]}
         rows={data.map((s) => ({ ...s, id: s._id }))}
         // slots={{
@@ -49,9 +79,9 @@ const StudentsRosterDataGrid = ({ schedule }: StudentsRosterDataGridProps) => {
         disableColumnResize
         disableDensitySelector
         disableColumnMenu
-        onRowDoubleClick={(data) => {
-          setOpenData(data.row);
-        }}
+        // onRowDoubleClick={(data) => {
+        //   setOpenData(data.row);
+        // }}
       />
     </div>
   );

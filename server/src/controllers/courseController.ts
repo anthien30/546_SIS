@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import { ICourse } from "../models";
+import { ICourse, ISchedule } from "../models";
 import Course from "../models/Course";
+import Account from "../models/Account";
+import AcademicRecord from "../models/AcademicRecord";
 
 export const createCourse = async (
   req: Request,
@@ -111,4 +113,37 @@ export const deleteCourse = async (
   await Course.deleteOne({ _id: id });
 
   res.status(200).json({ message: "Course deleted" });
+};
+
+export const getCourseEligibility = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { courseId, studentId } = req.query;
+
+  const course = await Course.findById(courseId);
+  if (!course)
+    return res
+      .status(400)
+      .json({ message: "Course not found with the given id" });
+
+  const student = await Account.findById(studentId);
+  if (!student)
+    return res
+      .status(400)
+      .json({ message: "Student account not found with the given id" });
+
+  const filters: any = {};
+  filters.student = studentId;
+  const passedCourses = (
+    await AcademicRecord.find(filters).populate("schedule")
+  )
+    ?.filter((r) => r.grade >= 80)
+    ?.map((c) => (c.schedule as unknown as ISchedule).course.toString());
+
+  res.status(200).json({
+    isEligible: (course as ICourse).prerequisites.every((p) =>
+      passedCourses.includes(p.toString())
+    ),
+  });
 };

@@ -20,9 +20,15 @@ export const createOrUpdateGrades = async (
         filter: {
           student: grade.student,
           schedule: grade.schedule,
-          event: grade.event,
+          _id: grade._id,
         }, // Identify existing grade
-        update: { $set: { score: grade.score, maxScore: grade.maxScore } }, // Update fields
+        update: {
+          $set: {
+            score: grade.score,
+            maxScore: grade.maxScore,
+            event: grade.event,
+          },
+        }, // Update fields
         upsert: true, // Insert if not found
       },
     }));
